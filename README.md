@@ -5,8 +5,11 @@ Bản chuyển đổi không chính thức dựa trên [Mochy Music 8.3.2](https
 ## Tình trạng thật
 
 - Đã viết mã nguồn SwiftUI cho giao diện tìm kiếm, thư viện và trình phát file nhạc.
-- **Chưa biên dịch bằng Xcode, chưa chạy trên máy thật, chưa có IPA đã kiểm chứng.**
-- Mã nguồn đang được đưa lên `anhtuan119/Mochy-iOS`; xem GitHub Actions để biết kết quả build thực tế.
+- **Đã build thành công bằng Xcode và xuất IPA arm64 chưa ký. Chưa chạy trên iPhone thật.**
+- Build: https://github.com/anhtuan119/Mochy-iOS/actions/runs/42173326166
+- IPA SHA-256: `6e2cbeb0ceddf04b03fc01d4b1c86c1fc24722dd51a22055305674b01b01c101`.
+- Đã kiểm tra ZIP, Mach-O arm64, bundle ID, iOS tối thiểu 17.0, audio background mode và đối chiếu checksum artifact.
+- Mã nguồn đã được đưa lên `anhtuan119/Mochy-iOS`; xem GitHub Actions để biết kết quả build thực tế.
 - Tìm kiếm YouTube Music dùng cấu trúc WEB_REMIX của bản Android, chưa thử kết nối thực tế; API không chính thức có thể thay đổi.
 - Bài online mở trang YouTube trong WKWebView, không phải engine phát native của Android. Không có phát nền online, tải nhạc online, đồng bộ tài khoản, module, EQ hay toàn bộ giao diện Android.
 
@@ -29,7 +32,7 @@ Workflow chạy trên macOS, dùng Xcode build cho thiết bị arm64; kiểm tr
 
 ## Kiểm thử còn phải làm
 
-- Build Xcode thành công rồi cài lên iPhone; mở app không crash.
+- Ký và cài IPA lên iPhone; kiểm tra mở app không crash.
 - Tìm một bài tiếng Việt; thử offline và truy vấn không có kết quả.
 - Mở bài YouTube, nhấn play; đóng trang thì âm thanh web dừng.
 - Nhập MP3/M4A từ Tệp, phát/tua/chuyển bài, khoá màn hình, rút tai nghe.
