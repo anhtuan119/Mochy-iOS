@@ -1,0 +1,47 @@
+name: Build Mochy iOS
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode version
+        run: xcodebuild -version
+      - name: Build for iPhone
+        run: |
+          set -o pipefail
+          xcodebuild -project ios/Mochy.xcodeproj -target Mochy -configuration Release -sdk iphoneos SYMROOT="$PWD/build" CODE_SIGNING_ALLOWED=NO 2>&1 | tee build.log
+      - name: Verify and package unsigned IPA
+        run: |
+          set -euo pipefail
+          APP="$PWD/build/Release-iphoneos/Mochy.app"
+          test -f "$APP/Mochy"
+          lipo -archs "$APP/Mochy" | grep -w arm64
+          plutil -lint "$APP/Info.plist"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")" = 'com.anhtuan119.mochyios'
+          /usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes' "$APP/Info.plist" | grep audio
+          mkdir -p output/Payload
+          cp -R "$APP" output/Payload/
+          cd output
+          zip -qry Mochy-iOS-0.1-UNSIGNED.ipa Payload
+          shasum -a 256 Mochy-iOS-0.1-UNSIGNED.ipa > SHA256SUMS.txt
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mochy-iOS-0.1-UNSIGNED
+          path: |
+            output/Mochy-iOS-0.1-UNSIGNED.ipa
+            output/SHA256SUMS.txt
+          if-no-files-found: error
+      - name: Save compiler log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiler-log
+          path: build.log
